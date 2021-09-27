@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration  scan="true" scanPeriod="60 seconds" debug="false">
+
+    <contextName>logback</contextName>
+
+    <property name="log.path" value="log" />
+
+    <!--输出到控制台-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%highlight(%date{yyyy-MM-dd HH:mm:ss}) | %highlight(%-5level) | %highlight(%thread) | %highlight(%logger) | %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--输出到文件-->
+    <!--<appender name="file" class="ch.qos.logback.core.FileAppender">
+        <file>${log.path}/log-.%d{yyyy-MM-dd}.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>-->
+
+    <!--  按时间滚动产生日志文件 -->
+    <appender name="ROL-FILE-LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--滚动策略，按照时间滚动 TimeBasedRollingPolicy-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}/log-can.%d{yyyyMMdd}.log</fileNamePattern>
+            <!-- 只保留近七天的日志 -->
+            <maxHistory>7</maxHistory>
+            <!-- 用来指定日志文件的上限大小，那么到了这个值，就会删除旧的日志 -->
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="warn">
+        <appender-ref ref="console" />
+        <appender-ref ref="ROL-FILE-LOG" />
+    </root>
+
+    <!-- 指定开发环境基础的日志输出级别为DEBUG，并且绑定了名为STDOUT的appender，表示将日志信息输出到控制台 -->
+    <springProfile  name="dev">
+        <root level="DEBUG">
+            <appender-ref ref="STDOUT" />
+        </root>
+    </springProfile>
+
+    <!-- 指定生产环境基础的日志输出级别为INFO，并且绑定了名为ASYNC的appender，表示将日志信息异步输出到文件 -->
+    <springProfile  name="prod">
+        <root level="INFO">
+            <appender-ref ref="ASYNC" />
+        </root>
+    </springProfile>
+
+</configuration>

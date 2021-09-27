@@ -1,0 +1,8 @@
+server:
+  port: 9898
+socket:
+  port: 8888
+  pool-keep: 20
+  pool-core: 10
+  pool-max: 30
+  pool-queue-init: 10
